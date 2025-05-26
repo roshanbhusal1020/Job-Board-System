@@ -3,15 +3,11 @@ package com.example.jobposting.controller;
 
 import com.example.jobposting.model.Job;
 import com.example.jobposting.service.JobService;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
-import org.springframework.validation.BindingResult;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // Marks this class as a REST controller to handle HTTP requests/responses
 @RestController
@@ -43,18 +39,13 @@ public class JobController {
     // @RequestBody → Converts the incoming JSON into a 'Job' object
 
     @PostMapping
-    public ResponseEntity<?> createJob(@Valid @RequestBody Job job, BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            result.getFieldErrors().forEach(error ->
-                    errors.put(error.getField(), error.getDefaultMessage()));
-
-            System.out.println("❌ Validation triggered manually: " + errors);
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-        }
-
-        System.out.println("✅ Job passed validation: " + job.getTitle());
-        return new ResponseEntity<>(jobService.createJob(job), HttpStatus.CREATED);
+    public Job createJob(@Valid @RequestBody Job job) {
+        // @RequestBody converts the incoming JSON to a Job object
+        return jobService.createJob(job);
     }
-
 }
+
+
+
+
+
