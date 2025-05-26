@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Board</title>
+</head>
+<body>
+    <h1>Post a Job</h1>
+    <form id="jobForm">
+        <input type="text" id="title" placeholder="Title" ><br>
+        <textarea id="description" placeholder="Description" ></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>All Jobs</h2>
+    <ul id="jobList"></ul>
+
+    <script>
+        const API_URL = "http://localhost:8080/jobs";
+
+        document.getElementById('jobForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, description })
+            });
+
+            loadJobs();
+        });
+
+        async function loadJobs() {
+            const res = await fetch(API_URL);
+            const jobs = await res.json();
+            const list = document.getElementById('jobList');
+            list.innerHTML = '';
+            jobs.forEach(job => {
+                const li = document.createElement('li');
+                li.textContent = `${job.title} - ${job.description}`;
+                list.appendChild(li);
+            });
+        }
+
+        loadJobs();
+    </script>
+</body>
+</html>
