@@ -21,6 +21,10 @@ public class User {
     private String email;
 
 
+
+    @NotNull(message = "Pin is required")
+    private int pin;
+
     public String getName() {
         return name;
     }
@@ -43,5 +47,12 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+    public int getPin() {
+        return pin;
+    }
+
+    public void setPin(int pin) {
+        this.pin = pin;
     }
 }

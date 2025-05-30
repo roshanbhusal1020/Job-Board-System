@@ -4,18 +4,41 @@
     <title>Job Board</title>
 </head>
 <body>
-    <h1>Post a Job</h1>
+
+    <h1>Job Board</h1>
+
+    <div id="authSection">
+        <h2>Signup</h2>
+        <form id="signupForm">
+            <input type="text" id="signupName" placeholder="Name"><br>
+            <input type="email" id="signupEmail" placeholder="Email"><br>
+            <input type="number" id="signupPin" placeholder="PIN"><br>
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Email"><br>
+            <input type="number" id="loginPin" placeholder="PIN"><br>
+            <button type="submit">Log In</button>
+        </form>
+
+        <div id="userInfo"></div>
+    </div>
+
+    <h2>Post a Job</h2>
     <form id="jobForm">
-        <input type="text" id="title" placeholder="Title" ><br>
-        <textarea id="description" placeholder="Description" ></textarea><br>
+        <input type="text" id="title" placeholder="Title"><br>
+        <textarea id="description" placeholder="Description"></textarea><br>
         <button type="submit">Submit</button>
     </form>
 
     <h2>All Jobs</h2>
     <ul id="jobList"></ul>
 
-    <script>
+  <script>
         const API_URL = "http://localhost:8080/jobs";
+        const AUTH_URL = "http://localhost:8080/auth";
 
         document.getElementById('jobForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -25,14 +48,17 @@
             await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, description })
+                body: JSON.stringify({ title, description }),
+                credentials: 'include' // ✅ Moved inside
             });
 
             loadJobs();
         });
 
         async function loadJobs() {
-            const res = await fetch(API_URL);
+            const res = await fetch(API_URL, {
+                credentials: 'include' // ✅ Needed here too
+            });
             const jobs = await res.json();
             const list = document.getElementById('jobList');
             list.innerHTML = '';
@@ -43,7 +69,67 @@
             });
         }
 
+        // Signup
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const pin = document.getElementById('signupPin').value;
+
+            const res = await fetch(`${AUTH_URL}/signup`, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({ name, email, pin }),
+                credentials: "include"
+            });
+
+            const user = await res.json();
+            document.getElementById('userInfo').textContent = `Signed up as: ${user.name}`;
+        });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pin = document.getElementById('loginPin').value;
+
+            const res = await fetch(`${AUTH_URL}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({ email, pin }),
+                credentials: "include"
+            });
+
+            const user = await res.json();
+            if (user && user.name) {
+                document.getElementById('userInfo').textContent = `Logged in as: ${user.name}`;
+            } else {
+                document.getElementById('userInfo').textContent = "Login failed";
+            }
+        });
+
+async function getCurrentUser() {
+    const res = await fetch(`${AUTH_URL}/me`, {
+        method: "POST",
+        credentials: "include"
+    });
+
+    if (res.ok) {
+        const text = await res.text(); // get raw response
+        if (text) {
+            const user = JSON.parse(text);
+            document.getElementById('userInfo').textContent = `Logged in as: ${user.name}`;
+        } else {
+            document.getElementById('userInfo').textContent = "No user info found.";
+        }
+    } else {
+        document.getElementById('userInfo').textContent = "Not logged in";
+    }
+}
+
+
         loadJobs();
+        getCurrentUser();
     </script>
 </body>
 </html>
