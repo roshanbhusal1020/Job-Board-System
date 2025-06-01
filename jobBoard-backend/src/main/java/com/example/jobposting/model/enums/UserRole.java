@@ -1,6 +1,8 @@
 package com.example.jobposting.model.enums;
 
-public class UserRole {
-
+public enum UserRole {
+    JOB_SEEKER,
+    EMPLOYER,
+    ADMIN
 
 }
