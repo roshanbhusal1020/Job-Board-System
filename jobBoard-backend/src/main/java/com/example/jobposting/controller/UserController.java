@@ -2,6 +2,7 @@ package com.example.jobposting.controller;
 
 
 import com.example.jobposting.model.User;
+import com.example.jobposting.model.enums.UserRole;
 import com.example.jobposting.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -33,8 +34,8 @@ public class UserController {
 //    @RequestBody = big JSON in body. like json_decode($request->getContent()) in laravel
 
     @PostMapping("/signup")
-    public User signUp(@Valid @RequestParam String name, @Valid @RequestParam String email, @Valid @RequestParam int pin,  HttpSession session) {
-        User user = userservice.register(name, email, pin);
+    public User signUp(@Valid @RequestParam String name, @Valid @RequestParam String email, @Valid @RequestParam int pin, @RequestParam UserRole userRole, HttpSession session) {
+        User user = userservice.register(name, email, pin, userRole);
 //        So what happens is with userservice.register it creates the user but we need the inforamtion about that user
 //                so we store in User user so that we can get id or anydetails about that user
 //same as laravel, dont complicate it:
@@ -70,5 +71,10 @@ public User currentUser(HttpSession session) {
             return null;
         }
 }
+
+    @GetMapping("/roles")
+    public UserRole[] getRoles() {
+        return UserRole.values();
+    }
 
 }

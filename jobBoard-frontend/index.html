@@ -13,6 +13,7 @@
             <input type="text" id="signupName" placeholder="Name"><br>
             <input type="email" id="signupEmail" placeholder="Email"><br>
             <input type="number" id="signupPin" placeholder="PIN"><br>
+            <input type="text" id="signupStatus" placeholder="Status"><br>
             <button type="submit">Sign Up</button>
         </form>
 
@@ -132,7 +133,18 @@ async function getCurrentUser() {
     }
 }
 
+async function getUserRoles() {
+    const res = await fetch(`${AUTH_URL}/roles`, {
+        method: "GET"
+    })
 
+            const text = await res.text(); // get raw response
+            const roles = JSON.parse(text);
+
+    // alert(res);
+    console.log(roles)
+}
+getUserRoles()
         // loadJobs();
         getCurrentUser();
     </script>

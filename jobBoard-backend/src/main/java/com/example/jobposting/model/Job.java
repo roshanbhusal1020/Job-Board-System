@@ -1,4 +1,5 @@
 package com.example.jobposting.model;
+import com.example.jobposting.model.enums.JobStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
@@ -25,9 +26,12 @@ public class Job {
     @NotBlank(message="Description is required")
     private String description;
 
-    private String status;
-    private Long userId;
+    @Enumerated(EnumType.STRING)
+    private JobStatus status;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Long getId() {
         return id;
@@ -49,13 +53,11 @@ public class Job {
         return description;
     }
 
-    public String getStatus() {
+
+    public JobStatus getStatus() {
         return status;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
 
     public void setId(Long id) {
         this.id = id;
@@ -77,11 +79,9 @@ public class Job {
         this.description = description;
     }
 
-    public void setStatus(String status) {
+
+    public void setStatus(JobStatus status) {
         this.status = status;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 }

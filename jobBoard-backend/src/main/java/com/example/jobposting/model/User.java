@@ -1,9 +1,7 @@
 package com.example.jobposting.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.jobposting.model.enums.UserRole;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 
@@ -24,6 +22,15 @@ public class User {
 
     @NotNull(message = "Pin is required")
     private int pin;
+
+
+
+    private String resume;
+
+
+
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 
     public String getName() {
         return name;
@@ -54,5 +61,19 @@ public class User {
 
     public void setPin(int pin) {
         this.pin = pin;
+    }
+    public String getResume() {
+        return resume;
+    }
+
+    public void setResume(String resume) {
+        this.resume = resume;
+    }
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 }
