@@ -1,6 +1,9 @@
 package com.example.jobposting.service;
 
 import com.example.jobposting.model.Job;
+import com.example.jobposting.model.User;
+
+import com.example.jobposting.model.enums.JobStatus;
 import com.example.jobposting.repository.JobRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -24,8 +27,17 @@ public class JobService {
     }
 
     // Saves a new job to the database
-    public Job createJob(Job job) {
+    public Job createJob(String jobTitle, String jobDescription, JobStatus jobStatus,  String jobLocation, String companyName, User user ) {
         // Uses the repository's built-in save() method
+        Job job = new Job();
+
+        job.setTitle(jobTitle);
+        job.setDescription(jobDescription);
+        job.setStatus(jobStatus);
+        job.setLocation(jobLocation);
+        job.setCompany(companyName);
+        job.setUser(user);
+
         return jobRepository.save(job);
     }
 }

@@ -19,13 +19,14 @@ public class UserService {
     }
 
 
-    public User register (String name, String email, int pin, UserRole userRole){
+    public User register (String name, String email, int pin, UserRole userRole, String resume){
      User user = new User();
      user.setName(name);
      user.setEmail(email);
      user.setPin(pin);
 
      user.setUserRole(userRole); // need to add dropdown in the frontend. this is just for now
+     user.setResume(resume);
      return userRepository.save(user);
 
     }

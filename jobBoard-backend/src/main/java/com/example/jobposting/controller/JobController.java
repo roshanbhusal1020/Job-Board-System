@@ -2,10 +2,17 @@ package com.example.jobposting.controller;
 
 
 import com.example.jobposting.model.Job;
+import com.example.jobposting.model.User;
+import com.example.jobposting.model.enums.JobStatus;
 import com.example.jobposting.service.JobService;
+import com.example.jobposting.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -14,16 +21,18 @@ import java.util.List;
 // All endpoints in this controller start with "/jobs"
 @RequestMapping("/jobs")
 // Allows cross-origin requests (e.g., from a frontend app)
-@CrossOrigin(origins = "http://127.0.0.1:5500")  // or whatever your frontend address is
+@CrossOrigin(origins = "http://localhost:5500")  // or whatever your frontend address is
 
 public class JobController {
 
     // Dependency: Controller needs a service to handle business logic
     private final JobService jobService;
+    private final UserService userService;
 
     // Constructor: Spring injects the JobService automatically (dependency injection)
-    public JobController(JobService jobService) {
+    public JobController(JobService jobService, UserService userService) {
         this.jobService = jobService;
+        this.userService = userService;
     }
 
     // GET /jobs → Returns all jobs
@@ -38,11 +47,39 @@ public class JobController {
     // @Valid → Triggers validation on the 'job' object before this method runs
     // @RequestBody → Converts the incoming JSON into a 'Job' object
 
-    @PostMapping
-    public Job createJob(@Valid @RequestBody Job job) {
-        // @RequestBody converts the incoming JSON to a Job object
-        return jobService.createJob(job);
+    @GetMapping("/jobStatus")
+    public JobStatus[] getJobStatus() {
+        return JobStatus.values();
     }
+
+
+    @PostMapping("/createJob")
+    public Job createJob(@Valid @RequestParam String jobTitle, @Valid @RequestParam String jobDescription, @Valid @RequestParam JobStatus jobStatus, String jobLocation, String companyName,  HttpSession session) {
+        // @RequestBody converts the incoming JSON to a Job object
+
+        Long userId = (Long) session.getAttribute("userId");
+
+        if (userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not logged in");
+        }
+
+        User user = userService.getbyId(userId);
+
+
+
+        Job job  = jobService.createJob(jobTitle, jobDescription, jobStatus, jobLocation, companyName, user );
+
+        if (job != null) {
+            session.setAttribute("jobId", job.getId());
+            return job;
+        }
+        else  {
+            return null;
+
+        }
+    }
+
+
 }
 
 

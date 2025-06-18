@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.*;
 
+
+
 @Entity
 public class Job {
     @Id //this means its  a primary key
@@ -28,6 +30,8 @@ public class Job {
 
     @Enumerated(EnumType.STRING)
     private JobStatus status;
+
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -57,7 +61,13 @@ public class Job {
     public JobStatus getStatus() {
         return status;
     }
+    public User getUser() {
+        return user;
+    }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public void setId(Long id) {
         this.id = id;

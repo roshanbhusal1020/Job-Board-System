@@ -13,7 +13,12 @@
             <input type="text" id="signupName" placeholder="Name"><br>
             <input type="email" id="signupEmail" placeholder="Email"><br>
             <input type="number" id="signupPin" placeholder="PIN"><br>
-            <input type="text" id="signupStatus" placeholder="Status"><br>
+            <textarea  id="signupResume" placeholder="Resume"></textarea><br>
+
+            <select id="signupRole">
+                    <option value=""> Select Role</option>
+            </select><br>
+
             <button type="submit">Sign Up</button>
         </form>
 
@@ -38,6 +43,8 @@
     <ul id="jobList"></ul> -->
 
   <script>
+
+    console.log("Login script loaded");
         // const API_URL = "http://localhost:8080/jobs";
         const AUTH_URL = "http://localhost:8080/auth";
 
@@ -71,33 +78,37 @@
         // }
 
         // Signup
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const pin = document.getElementById('signupPin').value;
+        document.getElementById("signupForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // prevent form from reloading the page
 
-            const res = await fetch(`${AUTH_URL}/signup`, {
+            const formData = new URLSearchParams();
+            formData.append("name", document.getElementById("signupName").value);
+            formData.append("email", document.getElementById("signupEmail").value);
+            formData.append("pin", document.getElementById("signupPin").value);
+            formData.append("userRole", document.getElementById("signupRole").value); // <-- important
+            formData.append("resume", document.getElementById("signupResume").value); // <-- important
+
+
+            fetch("http://localhost:8080/auth/signup", {
                 method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: new URLSearchParams({ name, email, pin }),
-                credentials: "include"
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("User created:", data);
+            })
+            .catch(error => {
+                console.error("Error:", error);
             });
-
-            const user = await res.json();
-
-            if (user && user.name) {
-                window.location.href="dashboard.html"
-            }
-            document.getElementById('userInfo').textContent = `Signed up as: ${user.name}`;
         });
 
         // Login
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const email = document.getElementById('loginEmail').value;
             const pin = document.getElementById('loginPin').value;
-
+            
             const res = await fetch(`${AUTH_URL}/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -108,9 +119,12 @@
             const user = await res.json();
             if (user && user.name) {
                 document.getElementById('userInfo').textContent = `Logged in as: ${user.name}`;
+                console.log("logged in")
                 window.location.href="dashboard.html"
             } else {
                 document.getElementById('userInfo').textContent = "Login failed";
+                console.log("login failed")
+
             }
         });
 
@@ -124,6 +138,7 @@ async function getCurrentUser() {
         const text = await res.text(); // get raw response
         if (text) {
             const user = JSON.parse(text);
+            console.log(user)
             document.getElementById('userInfo').textContent = `Logged in as: ${user.name}`;
         } else {
             document.getElementById('userInfo').textContent = "No user info found.";
@@ -138,13 +153,25 @@ async function getUserRoles() {
         method: "GET"
     })
 
-            const text = await res.text(); // get raw response
-            const roles = JSON.parse(text);
+    // const text = await res.text(); // get raw response
+    // const roles = JSON.parse(text);
 
-    // alert(res);
-    console.log(roles)
+    const roles = await res.json();
+    const dropdown = document.getElementById("signupRole");
+    const updateRole = document.getElementById("updateRole"); 
+
+
+    roles.forEach (role => {
+        const option = document.createElement("option");
+        option.value = role;
+        option.textContent = role;
+
+        dropdown.appendChild(option);
+
+        
+    })
 }
-getUserRoles()
+        getUserRoles()
         // loadJobs();
         getCurrentUser();
     </script>
