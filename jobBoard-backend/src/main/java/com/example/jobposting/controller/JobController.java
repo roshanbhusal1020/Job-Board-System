@@ -79,6 +79,14 @@ public class JobController {
         }
     }
 
+    @GetMapping("/getJobs")
+    public List<Job> getJobs() {
+        return jobService.getAllJobs();
+    }
+
+    @PostMapping("/job/apply")
+    public ResponseEntity<String> applyToJobs (@RequestParam)
+
 
 }
 

@@ -37,7 +37,6 @@ public class JobService {
         job.setLocation(jobLocation);
         job.setCompany(companyName);
         job.setUser(user);
-
         return jobRepository.save(job);
     }
 }
