@@ -1,6 +1,7 @@
 package com.example.jobposting.controller;
 
 
+import com.example.jobposting.dto.ApplyRequest;
 import com.example.jobposting.model.Job;
 import com.example.jobposting.model.User;
 import com.example.jobposting.model.enums.JobStatus;
@@ -85,7 +86,15 @@ public class JobController {
     }
 
     @PostMapping("/job/apply")
-    public ResponseEntity<String> applyToJobs (@RequestParam)
+    public ResponseEntity<String> applyToJobs (@RequestBody ApplyRequest applyRequest, HttpSession session) {
+        Long userid = (Long) session.getAttribute("userId");
+
+        if (userid==null) {
+            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must log in to apply ");
+        }
+
+
+    }
 
 
 }
