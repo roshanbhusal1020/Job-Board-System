@@ -92,6 +92,14 @@ public class JobController {
         if (userid==null) {
             return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must log in to apply ");
         }
+        else {
+            if (jobService.createApplication(userid, applyRequest)) {
+                return ResponseEntity.ok("Application successful");
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Application failed");
+            }
+        }
 
 
     }

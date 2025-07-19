@@ -50,8 +50,10 @@ public class JobService {
         Optional<Job> jobOpt = jobRepository.findById(request.getJobId());
 
         if (jobOpt.isEmpty()) return false;
+        else {
+            return true;
 
-        if (applicationRepository.ex)
-
+        }
+//        if (applicationRepository.ex)
     }
 }
