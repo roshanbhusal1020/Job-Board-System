@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Board</title>
+</head>
+<body>
+
+    <h1>Job Board</h1>
+
+    <div id="authSection">
+        <h2>Signup</h2>
+        <form id="signupForm">
+            <input type="text" id="signupName" placeholder="Name"><br>
+            <input type="email" id="signupEmail" placeholder="Email"><br>
+            <input type="number" id="signupPin" placeholder="PIN"><br>
+            <textarea  id="signupResume" placeholder="Resume"></textarea><br>
+
+            <select id="signupRole">
+                    <option value=""> Select Role</option>
+            </select><br>
+
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Email"><br>
+            <input type="number" id="loginPin" placeholder="PIN"><br>
+            <button type="submit">Log In</button>
+        </form>
+
+        <div id="userInfo"></div>
+    </div>
+
+    <!-- <h2>Post a Job</h2>
+    <form id="jobForm">
+        <input type="text" id="title" placeholder="Title"><br>
+        <textarea id="description" placeholder="Description"></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>All Jobs</h2>
+    <ul id="jobList"></ul> -->
+
+  <script>
+
+    console.log("Login script loaded");
+        // const API_URL = "http://localhost:8080/jobs";
+        const AUTH_URL = "http://localhost:8080/auth";
+
+        // document.getElementById('jobForm').addEventListener('submit', async (e) => {
+        //     e.preventDefault();
+        //     const title = document.getElementById('title').value;
+        //     const description = document.getElementById('description').value;
+
+        //     await fetch(API_URL, {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify({ title, description }),
+        //         credentials: 'include' // ✅ Moved inside
+        //     });
+
+        //     loadJobs();
+        // });
+
+        // async function loadJobs() {
+        //     const res = await fetch(API_URL, {
+        //         credentials: 'include' // ✅ Needed here too
+        //     });
+        //     const jobs = await res.json();
+        //     const list = document.getElementById('jobList');
+        //     list.innerHTML = '';
+        //     jobs.forEach(job => {
+        //         const li = document.createElement('li');
+        //         li.textContent = `${job.title} - ${job.description}`;
+        //         list.appendChild(li);
+        //     });
+        // }
+
+        // Signup
+        document.getElementById("signupForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // prevent form from reloading the page
+
+            const formData = new URLSearchParams();
+            formData.append("name", document.getElementById("signupName").value);
+            formData.append("email", document.getElementById("signupEmail").value);
+            formData.append("pin", document.getElementById("signupPin").value);
+            formData.append("userRole", document.getElementById("signupRole").value); // <-- important
+            formData.append("resume", document.getElementById("signupResume").value); // <-- important
+
+
+            fetch("http://localhost:8080/auth/signup", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("User created:", data);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const pin = document.getElementById('loginPin').value;
+            
+            const res = await fetch(`${AUTH_URL}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({ email, pin }),
+                credentials: "include"
+            });
+
+            const user = await res.json();
+            if (user && user.name) {
+                document.getElementById('userInfo').textContent = `Logged in as: ${user.name}`;
+                console.log("logged in")
+                // window.location.href="dashboard.html"
+                if(user.userRole === "EMPLOYER"){
+                    window.location.href="/employers/post-job.html"
+                }
+                else if(user.userRole === "JOB_SEEKER"){
+                    window.location.href="/jobSeeker/feed.html"
+                }
+                // else if(user.userRole == "ADMIN"){
+                //     window.location.href="adminDashboard.html"
+                // }
+
+
+            } else {
+                document.getElementById('userInfo').textContent = "Login failed";
+                console.log("login failed")
+
+            }
+        });
+
+async function getCurrentUser() {
+    const res = await fetch(`${AUTH_URL}/me`, {
+        method: "POST",
+        credentials: "include"
+    });
+
+    if (res.ok) {
+        const text = await res.text(); // get raw response
+        if (text) {
+            const user = JSON.parse(text);
+            console.log(user)
+            document.getElementById('userInfo').textContent = `Logged in as: ${user.name}`;
+        } else {
+            document.getElementById('userInfo').textContent = "No user info found.";
+        }
+    } else {
+        document.getElementById('userInfo').textContent = "Not logged in";
+    }
+}
+
+async function getUserRoles() {
+    const res = await fetch(`${AUTH_URL}/roles`, {
+        method: "GET"
+    })
+
+    // const text = await res.text(); // get raw response
+    // const roles = JSON.parse(text);
+
+    const roles = await res.json();
+    const dropdown = document.getElementById("signupRole");
+    const updateRole = document.getElementById("updateRole"); 
+
+
+    roles.forEach (role => {
+        const option = document.createElement("option");
+        option.value = role;
+        option.textContent = role;
+
+        dropdown.appendChild(option);
+
+        
+    })
+}
+        getUserRoles()
+        // loadJobs();
+        getCurrentUser();
+    </script>
+</body>
+</html>

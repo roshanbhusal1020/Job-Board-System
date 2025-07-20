@@ -1,0 +1,106 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Job Posting</title>
+</head>
+<body>
+<h1>Post a job</h1>
+
+<form id="createJob">
+    <input type="text" id="jobTitle" placeholder="Job Title"><br>
+    <input type="text" id="jobDescription" placeholder="Job Description"><br>
+    <input type="text" id="jobLocation" placeholder="Job Location"><br>
+    <input type="text" id="jobCompany" placeholder="Company name"><br>
+
+
+
+<!--    <select id="updateJobStatus">-->
+<!--        <option value=""> Update job status</option>-->
+<!--    </select>-->
+
+    <button type="submit">Create </button>
+
+
+</form>
+
+<div id="myJobs">
+
+</div>
+<script>
+    const AUTH_URL = "http://localhost:8080/auth";
+
+    const URL = "http://localhost:8080";
+
+    document.getElementById('createJob').addEventListener('submit', async(e)=>{
+        e.preventDefault();
+
+        const jobTitle = document.getElementById('jobTitle').value;
+        const jobDescription = document.getElementById('jobDescription').value;
+        // const jobStatus = document.getElementById('updateJobStatus').value;
+        const jobLocation = document.getElementById('jobLocation').value;
+        const companyName = document.getElementById('jobCompany').value;
+        const jobStatus = "OPEN";
+
+
+
+
+        const res = await fetch(`${URL}/jobs/createJob`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ jobTitle, jobDescription,jobStatus,jobLocation, companyName }),
+            credentials: "include"
+        })
+        console.log(res)
+
+        const job = await res.text();
+        console.log(job)
+
+
+    })
+
+    const getJobs = async () => {
+        const myJobs = document.getElementById('myJobs');
+        const res = await fetch(`${URL}/jobs/getEmployersJobs`, {
+            method: "GET",
+            credentials: "include"
+        })
+        const jobs = await res.json();
+        console.log(jobs)
+
+        if (jobs.length === 0) {
+            myJobs.innerHTML = "<h2>No jobs posted yet</h2>";
+            return;
+        }
+
+        myJobs.innerHTML = "";
+
+        for (let job of jobs) {
+
+            const jobDiv = document.createElement("div");
+            jobDiv.innerHTML = `
+                          <h2>${job.jobTitle}</h2>
+                          <p>${job.description}</p>
+                          <p>${job.location}</p>
+                          <p>${job.company}</p>
+                          <p>${job.status}</p>
+                        `;
+            myJobs.prepend(jobDiv);
+
+
+
+        }
+
+    }
+
+    getJobs();
+</script>
+</body>
+</html>

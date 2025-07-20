@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+
+<h1>THIS IS DASHBOARD</h1>
+
+<div id="userInfo"></div>
+
+<form id="updateProfile">
+  <input type="text" id="updateName" placeholder="Name"><br>
+  <input type="email" id="updateEmail" placeholder="Email"><br>
+  <input type="number" id="updatePin" placeholder="PIN"><br>
+  <textarea id="updateResume" placeholder="Resume"></textarea><br>
+
+  <select id="updateRole">
+    <option value=""> Select Role</option>
+  </select><br>
+
+  <button type="submit">Update</button><br>
+</form>
+<br>
+<div id="employerSection">
+
+
+
+
+</div>
+
+<br>
+<br>
+<div> id="jobSeekerSection">
+  <a> Search job</a>
+</div>
+
+
+<script>
+const AUTH_URL = "http://localhost:8080/auth";
+
+const URL = "http://localhost:8080";
+
+async function getUserDetails() {
+  const res = await fetch(`${AUTH_URL}/userDetails`, {
+    method: "GET",
+    credentials: "include" // 🔴 CRITICAL FOR SESSION
+  });
+
+ const text = await res.text();
+
+
+try {
+  const user = JSON.parse(text); // convert string to object
+  console.log(user);
+  if (user && user.name) {
+    document.getElementById("userInfo").textContent = `Logged in as: ${user.name}`;
+    document.getElementById("updateName").value = user.name;
+    document.getElementById("updateEmail").value = user.email;
+    document.getElementById("updatePin").value = user.pin;
+    document.getElementById("updateResume").value = user.resume;
+    document.getElementById("updateRole").value = user.userRole;
+  } else {
+    document.getElementById("userInfo").textContent = "No user info found.";
+  }
+} catch (err) {
+  console.warn("Could not parse user details:", text);
+  document.getElementById("userInfo").textContent = "Not logged in.";
+}
+
+}
+
+async function getUserRoles() {
+  const res = await fetch(`${AUTH_URL}/roles`, {
+    method: "GET",
+    credentials: "include"
+  });
+
+  const roles = await res.json();
+  const roleDropdown = document.getElementById("updateRole");
+
+  roles.forEach(role => {
+    const option = document.createElement("option");
+    option.value = role;
+    option.textContent = role;
+    roleDropdown.appendChild(option);
+  });
+}
+
+
+async function getJobStatus () {
+  const res = await fetch(`${URL}/jobs/jobStatus`, {
+    method: "GET"
+  })
+  const jobStatuses = await res.json();
+  const jobStatusDropdown = document.getElementById("updateJobStatus"); 
+
+
+  jobStatuses.forEach(jobStatus=>{
+    const option = document.createElement("option")
+    option.value = jobStatus;
+    option.textContent = jobStatus;
+    jobStatusDropdown.appendChild(option)
+
+  })
+}
+
+
+// document.getElementById('createJob').addEventListener('submit', async(e)=>{
+//   e.preventDefault();
+//
+//   const jobTitle = document.getElementById('jobTitle').value;
+//   const jobDescription = document.getElementById('jobDescription').value;
+//   const jobStatus = document.getElementById('updateJobStatus').value;
+//   const jobLocation = document.getElementById('jobLocation').value;
+//   const companyName = document.getElementById('jobCompany').value;
+//
+//
+//
+//
+//
+//   const res = await fetch(`${URL}/jobs/createJob`, {
+//                 method: "POST",
+//                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
+//                 body: new URLSearchParams({ jobTitle, jobDescription,jobStatus,jobLocation, companyName }),
+//                 credentials: "include"
+//   })
+//
+//
+//   const job = await res.text();
+//   console.log(job)
+//
+//
+// })
+
+
+document.getElementById('updateProfile').addEventListener('submit', async(e)=>{
+  e.preventDefault();
+
+  const name = document.getElementById('updateName').value;
+  const email = document.getElementById('updateEmail').value;
+  const pin = document.getElementById('updatePin').value;
+  const resume = document.getElementById('updateResume').value;
+  const userRole = document.getElementById('updateRole').value;
+
+  const res = await fetch( `${AUTH_URL}/updateProfile`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ name, email, pin, userRole, resume  }),
+    credentials: "include"
+          }
+  )
+
+  const user = await res.text();
+  // alert("User updated: " + user)
+  console.log(user)
+  // window.location.reload();
+
+
+})
+
+window.onload = async function () {
+  await getUserRoles();
+  await getUserDetails();
+  await getJobStatus();
+};
+</script>
+
+</body>
+</html>
