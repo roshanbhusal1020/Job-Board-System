@@ -93,5 +93,21 @@ public User currentUser(HttpSession session) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
         }
     }
+    @PostMapping("/updateProfile")
+    public ResponseEntity<?>  updateProfile(HttpSession session, @RequestParam String name, @RequestParam String email, @RequestParam int pin, @RequestParam UserRole userRole, @RequestParam String resume) {
+        Long userid = (Long) session.getAttribute("userId");
+
+        if (userid == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+
+        }
+        try {
+            User user = userservice.updateProfile(userid, name, email, pin, userRole, resume);
+            return ResponseEntity.ok(user);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input");
+        }
+    }
 
 }

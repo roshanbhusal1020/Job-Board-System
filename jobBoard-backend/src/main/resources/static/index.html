@@ -120,7 +120,18 @@
             if (user && user.name) {
                 document.getElementById('userInfo').textContent = `Logged in as: ${user.name}`;
                 console.log("logged in")
-                window.location.href="dashboard.html"
+                // window.location.href="dashboard.html"
+                if(user.userRole === "EMPLOYER"){
+                    window.location.href="/employers/post-job.html"
+                }
+                else if(user.userRole === "JOB_SEEKER"){
+                    window.location.href="/jobSeeker/feed.html"
+                }
+                // else if(user.userRole == "ADMIN"){
+                //     window.location.href="adminDashboard.html"
+                // }
+
+
             } else {
                 document.getElementById('userInfo').textContent = "Login failed";
                 console.log("login failed")

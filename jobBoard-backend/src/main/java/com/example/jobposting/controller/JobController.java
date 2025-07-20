@@ -80,10 +80,18 @@ public class JobController {
         }
     }
 
-    @GetMapping("/getJobs")
-    public List<Job> getJobs() {
-        return jobService.getAllJobs();
+    @GetMapping("/getEmployersJobs")
+    public ResponseEntity<?> getEmployerJobs(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+        }
+
+        List<Job> jobs = jobService.getJobByUserId(userId);
+        return ResponseEntity.ok(jobs);
     }
+
+
 
     @PostMapping("/job/apply")
     public ResponseEntity<String> applyToJobs (@RequestBody ApplyRequest applyRequest, HttpSession session) {

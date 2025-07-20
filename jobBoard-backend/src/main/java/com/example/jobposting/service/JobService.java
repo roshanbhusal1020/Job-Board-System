@@ -56,4 +56,7 @@ public class JobService {
         }
 //        if (applicationRepository.ex)
     }
+    public List<Job> getJobByUserId(Long userId) {
+        return jobRepository.findByUserId(userId);
+    }
 }

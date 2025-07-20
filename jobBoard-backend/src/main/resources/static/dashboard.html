@@ -22,27 +22,18 @@
   <button type="submit">Update</button><br>
 </form>
 <br>
-
-<form id="createJob">
-  <input type="text" id="jobTitle" placeholder="Job Title"><br>
-  <input type="text" id="jobDescription" placeholder="Job Description"><br>
-  <input type="text" id="jobLocation" placeholder="Job Location"><br>
-  <input type="text" id="jobCompany" placeholder="Company name"><br>
+<div id="employerSection">
 
 
 
-  <select id="updateJobStatus">
-    <option value=""> Update job status</option>
-  </select>
 
-  <button type="submit">Create </button>
+</div>
 
-
-</form>
 <br>
 <br>
-
-<a> Search job</a>
+<div> id="jobSeekerSection">
+  <a> Search job</a>
+</div>
 
 
 <script>
@@ -57,6 +48,7 @@ async function getUserDetails() {
   });
 
  const text = await res.text();
+
 
 try {
   const user = JSON.parse(text); // convert string to object
@@ -114,33 +106,58 @@ async function getJobStatus () {
 }
 
 
-document.getElementById('createJob').addEventListener('submit', async(e)=>{
+// document.getElementById('createJob').addEventListener('submit', async(e)=>{
+//   e.preventDefault();
+//
+//   const jobTitle = document.getElementById('jobTitle').value;
+//   const jobDescription = document.getElementById('jobDescription').value;
+//   const jobStatus = document.getElementById('updateJobStatus').value;
+//   const jobLocation = document.getElementById('jobLocation').value;
+//   const companyName = document.getElementById('jobCompany').value;
+//
+//
+//
+//
+//
+//   const res = await fetch(`${URL}/jobs/createJob`, {
+//                 method: "POST",
+//                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
+//                 body: new URLSearchParams({ jobTitle, jobDescription,jobStatus,jobLocation, companyName }),
+//                 credentials: "include"
+//   })
+//
+//
+//   const job = await res.text();
+//   console.log(job)
+//
+//
+// })
+
+
+document.getElementById('updateProfile').addEventListener('submit', async(e)=>{
   e.preventDefault();
 
-  const jobTitle = document.getElementById('jobTitle').value;
-  const jobDescription = document.getElementById('jobDescription').value;
-  const jobStatus = document.getElementById('updateJobStatus').value; // Renamed to match backend
-  const jobLocation = document.getElementById('jobLocation').value;    // ✅ Correct ID
-  const companyName = document.getElementById('jobCompany').value;      // ✅ Correct ID
+  const name = document.getElementById('updateName').value;
+  const email = document.getElementById('updateEmail').value;
+  const pin = document.getElementById('updatePin').value;
+  const resume = document.getElementById('updateResume').value;
+  const userRole = document.getElementById('updateRole').value;
 
+  const res = await fetch( `${AUTH_URL}/updateProfile`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ name, email, pin, userRole, resume  }),
+    credentials: "include"
+          }
+  )
 
-
-
-
-  const res = await fetch(`${URL}/jobs/createJob`, {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: new URLSearchParams({ jobTitle, jobDescription,jobStatus,jobLocation, companyName }),
-                credentials: "include"
-  })
-
-
-  const job = await res.text();
-  console.log(job)
+  const user = await res.text();
+  // alert("User updated: " + user)
+  console.log(user)
+  // window.location.reload();
 
 
 })
-
 
 window.onload = async function () {
   await getUserRoles();
