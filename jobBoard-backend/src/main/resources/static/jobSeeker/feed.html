@@ -10,7 +10,55 @@
 </head>
 <body>
 <h1>Feed</h1>
+
+<div id="feed"></div>
+
 <script>
+
+
+    async function getFeed(){
+        const response = await fetch('http://localhost:8080/jobs/allJobs',
+            {
+                method: 'GET',
+                credentials: 'include'
+            });
+        const data = await response.json();
+        console.log(data);
+
+       const feed =  document.getElementById('feed');
+       data.forEach(job => {
+         const jobDiv = document.createElement('div');
+
+         jobDiv.innerHTML = `
+                            <h2>${job.title} </h2>
+                            <p>${job.company}</p>
+                            <p>${job.description}</p>
+                            <p>${job.status}</p>
+                            <button onclick=" applyJob(${job.id})">Apply</button>
+
+                            `
+           feed.appendChild(jobDiv)
+
+       })
+    }
+
+   const  applyJob = async (jobId) => {
+        const response = await fetch('http://localhost:8080/applications/apply', { //	Wait for the server to respond (header, status code)
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                jobId: jobId
+            })
+        })
+       const result = await response.text(); //	Wait for the body content to finish downloading and converting to text
+
+       console.log(result);
+    }
+
+    getFeed();
 
 </script>
 </body>

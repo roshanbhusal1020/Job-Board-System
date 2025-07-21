@@ -22,4 +22,37 @@ public class Application {
 
 //    private String resume;
 
+    public Long getId() {
+        return id;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public User getApplicationUser() {
+        return applicationUser;
+    }
+
+    public ApplicationStatus getApplicationStatus() {
+        return applicationStatus;
+    }
+
+    // === Setters ===
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
+    public void setApplicationUser(User applicationUser) {
+        this.applicationUser = applicationUser;
+    }
+
+    public void setApplicationStatus(ApplicationStatus applicationStatus) {
+        this.applicationStatus = applicationStatus;
+    }
+
 }
