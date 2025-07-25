@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Applications</title>
+</head>
+
+<body>
+<h1>My Applications!</h1>
+<div id="applications"></div>
+
+<script>
+    const URL = "http://localhost:8080";
+
+    async  function getApplications() {
+        const response = await fetch(URL + "/applications/getApplications", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const applications = await response.json();
+        console.log(applications);
+
+        const appContainer = document.getElementById("applications");
+        applications.forEach(app => {
+            console.log(app)
+            const div = document.createElement('div');
+            const withDrawnBtn = app.applicationStatus !== "WITHDRAW" ? `<button onclick="withDraw(${app.applicationId})">Withdraw</button>` : "";
+            appContainer.appendChild(div);
+
+            div.innerHTML = `<h2>${app.jobTitle}  </h2>
+                            <h2>${app.companyName}  </h2>
+                            <h2>${app.location}  </h2>
+                            <p>${app.description}  </p>
+                             ${withDrawnBtn}
+
+
+`
+        })
+
+    }
+
+    async function  withDraw(id) {
+        const response = await fetch(URL + "/applications/withdraw/" + id, {
+            method: "PUT",
+           credentials: "include"
+        })
+
+        // await getApplications();
+        console.log(id)
+
+    }
+
+    getApplications();
+</script>
+</body>
+
+
+</html>

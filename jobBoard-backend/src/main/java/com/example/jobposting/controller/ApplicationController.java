@@ -44,4 +44,15 @@ public class ApplicationController {
 
     }
 
+    @GetMapping("/getApplications")
+    public ResponseEntity<?> getApplications(HttpSession session) {
+        Long userid = (Long) session.getAttribute("userId");
+        if (userid == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+        }
+        return ResponseEntity.ok(applicationService.getApplicationsForUser(userid));
+    }
+
+    @PutMapping
+
 }

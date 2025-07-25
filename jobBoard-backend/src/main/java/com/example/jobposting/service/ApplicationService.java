@@ -1,5 +1,6 @@
 package com.example.jobposting.service;
 
+import com.example.jobposting.dto.ApplicationResponse;
 import com.example.jobposting.dto.ApplyRequest;
 import com.example.jobposting.model.Application;
 import com.example.jobposting.model.Job;
@@ -10,6 +11,8 @@ import com.example.jobposting.repository.JobRepository;
 import com.example.jobposting.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,5 +46,17 @@ public class ApplicationService {
 
         applicationRepository.save(application);
         return true;
+    }
+
+    public List<ApplicationResponse> getApplicationsForUser(Long userid) {
+
+//        return applicationRepository.findByUserId(userid);
+        List<Application> applications = applicationRepository.findByApplicationUserId(userid);
+        List<ApplicationResponse> result = new ArrayList<>();
+
+        for (Application app : applications) {
+            result.add(new ApplicationResponse(app));
+        }
+        return result;
     }
 }
