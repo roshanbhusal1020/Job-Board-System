@@ -76,7 +76,12 @@ public class ApplicationResponse {
             this.companyName = application.getJob().getCompany();
             this.description = application.getJob().getDescription();
             this.location = application.getJob().getLocation();
-            this.status = application.getJob().getStatus().toString();
+
+            if( application.getJob().getStatus() != null) {
+               this.status = application.getJob().getStatus().toString();
+            } else {
+                this.status = "UNKNOWN";
+            }
         }
     }
 

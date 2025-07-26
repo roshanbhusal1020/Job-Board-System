@@ -59,4 +59,19 @@ public class ApplicationService {
         }
         return result;
     }
+
+    public boolean withDrawApplication(Long applicationId, Long userId) {
+        Optional<Application> applicationOpt = applicationRepository.findById(applicationId);
+
+        if (applicationOpt.isEmpty()) return false;
+
+        if (!applicationOpt.get().getApplicationUser().getId().equals(userId)) return false;
+
+        applicationOpt.get().setApplicationStatus(ApplicationStatus.WITHDRAWN);
+        applicationRepository.save(applicationOpt.get());
+        return  true;
+    }
+
+
+
 }

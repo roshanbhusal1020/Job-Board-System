@@ -53,6 +53,21 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationService.getApplicationsForUser(userid));
     }
 
-    @PutMapping
+    @PutMapping("/withdraw/{id}")
+    public ResponseEntity<?> withDrawApplication(@PathVariable("id") Long applicationId, HttpSession session) {
+        Long userid = (Long) session.getAttribute("userId");
+
+        if (userid == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+        }
+       boolean success =  applicationService.withDrawApplication(applicationId, userid);
+
+        if (success) {
+            return ResponseEntity.ok("Withdrawal successful");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Withdrawal failed");
+        }
+    }
 
 }

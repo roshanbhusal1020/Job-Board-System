@@ -27,6 +27,7 @@
             console.log(app)
             const div = document.createElement('div');
             const withDrawnBtn = app.applicationStatus !== "WITHDRAW" ? `<button onclick="withDraw(${app.applicationId})">Withdraw</button>` : "";
+            // i need to make this withdraw part better
             appContainer.appendChild(div);
 
             div.innerHTML = `<h2>${app.jobTitle}  </h2>
@@ -37,6 +38,8 @@
 
 
 `
+
+            appContainer.appendChild(div);
         })
 
     }
@@ -47,7 +50,7 @@
            credentials: "include"
         })
 
-        // await getApplications();
+        await getApplications();
         console.log(id)
 
     }
