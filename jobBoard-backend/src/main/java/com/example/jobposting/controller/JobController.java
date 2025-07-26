@@ -22,7 +22,7 @@ import java.util.List;
 // All endpoints in this controller start with "/jobs"
 @RequestMapping("/jobs")
 // Allows cross-origin requests (e.g., from a frontend app)
-@CrossOrigin(origins = "http://localhost:5500")  // or whatever your frontend address is
+//@CrossOrigin(origins = "http://localhost:5500")
 
 public class JobController {
 
