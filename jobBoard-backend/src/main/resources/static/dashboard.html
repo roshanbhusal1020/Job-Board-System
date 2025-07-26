@@ -4,6 +4,14 @@
   <title>Dashboard</title>
 </head>
 <body>
+<nav>
+  <a href="#" onclick="loadPage('dashboard')">Dashboard</a>
+  <a href="#" onclick="loadPage('home')">Home</a>
+  <a href="#" onclick="loadPage('myjobs')">My jobs </a>
+  <a href="#" onclick="loadPage('appliedJobs')">Applied jobs </a>
+  <a href="#" onclick="loadPage('postJob')">Post a job </a>
+
+</nav>
 
 <h1>THIS IS DASHBOARD</h1>
 
@@ -31,12 +39,28 @@
 
 <br>
 <br>
-<div> id="jobSeekerSection">
-  <a> Search job</a>
-</div>
+
 
 
 <script>
+
+  function loadPage(page) {
+    if (page === "home") {
+      // content.innerHTML = "<h2>Home</h2><p>This is the home page.</p>";
+      window.location.href="/jobSeeker/feed.html"
+    } else if (page === "dashboard") {
+
+      window.location.href="/dashboard.html"
+    } else if (page === "myjobs") {
+      window.location.href="/employers/my-jobs.html"
+    } else if (page === "appliedJobs") {
+      window.location.href="/jobSeeker/applied-jobs.html"
+    } else if (page === "postJob") {
+      window.location.href="/employers/post-job.html"
+    }
+  }
+
+
 const AUTH_URL = "http://localhost:8080/auth";
 
 const URL = "http://localhost:8080";
