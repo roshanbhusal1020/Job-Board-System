@@ -22,7 +22,7 @@ import java.util.List;
 // All endpoints in this controller start with "/jobs"
 @RequestMapping("/jobs")
 // Allows cross-origin requests (e.g., from a frontend app)
-@CrossOrigin(origins = "http://localhost:5500")  // or whatever your frontend address is
+//@CrossOrigin(origins = "http://localhost:5500")
 
 public class JobController {
 
@@ -37,7 +37,7 @@ public class JobController {
     }
 
     // GET /jobs → Returns all jobs
-    @GetMapping
+    @GetMapping("/allJobs")
     public List<Job> getAllJobs() {
         // Delegate the work to the service layer
         return jobService.getAllJobs();
@@ -93,24 +93,24 @@ public class JobController {
 
 
 
-    @PostMapping("/job/apply")
-    public ResponseEntity<String> applyToJobs (@RequestBody ApplyRequest applyRequest, HttpSession session) {
-        Long userid = (Long) session.getAttribute("userId");
-
-        if (userid==null) {
-            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must log in to apply ");
-        }
-        else {
-            if (jobService.createApplication(userid, applyRequest)) {
-                return ResponseEntity.ok("Application successful");
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Application failed");
-            }
-        }
-
-
-    }
+//    @PostMapping("/job/apply")
+//    public ResponseEntity<String> applyToJobs (@RequestBody ApplyRequest applyRequest, HttpSession session) {
+//        Long userid = (Long) session.getAttribute("userId");
+//
+//        if (userid==null) {
+//            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must log in to apply ");
+//        }
+//        else {
+//            if (jobService.createApplication(userid, applyRequest)) {
+//                return ResponseEntity.ok("Application successful");
+//            }
+//            else {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Application failed");
+//            }
+//        }
+//
+//
+//    }
 
 
 }

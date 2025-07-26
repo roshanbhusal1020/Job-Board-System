@@ -6,11 +6,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>HTML 5 Boilerplate</title>
+    <title>Home</title>
 </head>
 <body>
+<nav>
+    <a href="#" onclick="loadPage('dashboard')">Dashboard</a>
+    <a href="#" onclick="loadPage('home')">Home</a>
+    <a href="#" onclick="loadPage('myjobs')">My jobs </a>
+    <a href="#" onclick="loadPage('appliedJobs')">Applied jobs </a>
+    <a href="#" onclick="loadPage('postJob')">Post a job </a>
+
+</nav>
 <h1>Feed</h1>
+
+<div id="feed"></div>
+
 <script>
+
+    function loadPage(page) {
+        if (page === "home") {
+            // content.innerHTML = "<h2>Home</h2><p>This is the home page.</p>";
+            window.location.href="/jobSeeker/feed.html"
+        } else if (page === "dashboard") {
+
+            window.location.href="/dashboard.html"
+        } else if (page === "myjobs") {
+            window.location.href="/employers/my-jobs.html"
+        } else if (page === "appliedJobs") {
+            window.location.href="/jobSeeker/applied-jobs.html"
+        } else if (page === "postJob") {
+            window.location.href="/employers/post-job.html"
+        }
+    }
+
+
+    async function getFeed(){
+        const response = await fetch('http://localhost:8080/jobs/allJobs',
+            {
+                method: 'GET',
+                credentials: 'include'
+            });
+        const data = await response.json();
+        console.log(data);
+
+       const feed =  document.getElementById('feed');
+       data.forEach(job => {
+         const jobDiv = document.createElement('div');
+
+         jobDiv.innerHTML = `
+                            <h2>${job.title} </h2>
+                            <p>${job.company}</p>
+                            <p>${job.description}</p>
+                            <p>${job.status}</p>
+                            <button onclick=" applyJob(${job.id})">Apply</button>
+
+                            `
+           feed.appendChild(jobDiv)
+
+       })
+    }
+
+   const  applyJob = async (jobId) => {
+        const response = await fetch('http://localhost:8080/applications/apply', { //	Wait for the server to respond (header, status code)
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                jobId: jobId
+            })
+        })
+       const result = await response.text(); //	Wait for the body content to finish downloading and converting to text
+
+       console.log(result);
+    }
+
+    getFeed();
 
 </script>
 </body>
