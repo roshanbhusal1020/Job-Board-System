@@ -43,13 +43,12 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public User updateProfile(Long userId, String name, String email, int pin, UserRole userRole, String resume){
+    public User updateProfile(Long userId, String name, String email, int pin, String resume){
         User user = userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("Invalid user ID:" + userId));
 
             user.setName(name);
             user.setEmail(email);
             user.setPin(pin);
-            user.setUserRole(userRole);
             user.setResume(resume);
             return userRepository.save(user);
 
