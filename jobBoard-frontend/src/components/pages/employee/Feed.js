@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../Navbar";
+import {
+  Box,
+  Button,
+  Heading,
+  Text,
+  VStack,
+  StackDivider,
+} from "@chakra-ui/react";
 
 export default function Feed() {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:8080/jobs/allJobs", {
-        method: "GET",
+      method: "GET",
       credentials: "include",
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(setJobs)
       .catch(console.error);
   }, []);
@@ -26,18 +34,44 @@ export default function Feed() {
   };
 
   return (
-    <div>
+    <Box p={4}>
       <Navbar />
-      <h1>Feed</h1>
-      {jobs.map(job => (
-        <div key={job.id}>
-          <h2>{job.title}</h2>
-          <p>{job.company}</p>
-          <p>{job.description}</p>
-          <p>{job.status}</p>
-          <button onClick={() => applyJob(job.id)}>Apply</button>
-        </div>
-      ))}
-    </div>
+      <Heading as="h1" size="lg" mb={6}>
+        Feed
+      </Heading>
+
+      <VStack
+        spacing={4}
+        align="stretch"
+        divider={<StackDivider borderColor="gray.200" />}
+      >
+        {jobs.map((job) => (
+          <Box
+            key={job.id}
+            borderWidth="1px"
+            borderRadius="lg"
+            p={4}
+            boxShadow="sm"
+          >
+            <Heading as="h2" size="md" mb={2}>
+              {job.title}
+            </Heading>
+            <Text fontWeight="bold">{job.company}</Text>
+            <Text mt={2}>{job.description}</Text>
+            <Text mt={2} color="gray.600">
+              Status: {job.status}
+            </Text>
+            <Button
+              colorScheme="teal"
+              size="sm"
+              mt={3}
+              onClick={() => applyJob(job.id)}
+            >
+              Apply
+            </Button>
+          </Box>
+        ))}
+      </VStack>
+    </Box>
   );
 }
