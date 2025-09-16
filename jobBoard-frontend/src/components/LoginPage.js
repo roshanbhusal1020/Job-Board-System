@@ -1,4 +1,15 @@
 import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Heading,
+  Input,
+  Select,
+  Textarea,
+  VStack,
+  FormControl,
+  FormLabel
+} from "@chakra-ui/react";
 
 export default function LoginPage() {
   const [user, setUser] = useState(null);
@@ -68,33 +79,61 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div>
-      <h1>Job Board</h1>
+    return (
+    <Box maxW="md" mx="auto" mt={10} p={6} borderWidth="1px" borderRadius="md">
+      <Heading mb={4}>Job Board</Heading>
 
-      {user && <div>Logged in as: {user.name}</div>}
+      {user && <Box mb={4}>Logged in as: {user.name}</Box>}
 
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSignup}>
-        <input name="name" placeholder="Name" />
-        <input name="email" placeholder="Email" />
-        <input name="pin" placeholder="PIN" />
-        <textarea name="resume" placeholder="Resume" />
-        <select name="userRole">
-          <option value="">Select Role</option>
-          {roles.map(role => (
-            <option key={role} value={role}>{role}</option>
-          ))}
-        </select>
-        <button type="submit">Sign Up</button>
-      </form>
+      <Box mb={8}>
+        <Heading size="md" mb={4}>Sign Up</Heading>
+        <form onSubmit={handleSignup}>
+          <VStack spacing={3} align="stretch">
+            <FormControl>
+              <FormLabel>Name</FormLabel>
+              <Input name="name" placeholder="Name" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Email</FormLabel>
+              <Input name="email" placeholder="Email" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>PIN</FormLabel>
+              <Input name="pin" placeholder="PIN" type="password" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Resume</FormLabel>
+              <Textarea name="resume" placeholder="Resume" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Role</FormLabel>
+              <Select name="userRole" placeholder="Select Role">
+                {roles.map(role => (
+                  <option key={role} value={role}>{role}</option>
+                ))}
+              </Select>
+            </FormControl>
+            <Button type="submit" colorScheme="teal" width="full">Sign Up</Button>
+          </VStack>
+        </form>
+      </Box>
 
-      <h2>Log In</h2>
-      <form onSubmit={handleLogin}>
-        <input name="email" placeholder="Email" />
-        <input name="pin" placeholder="PIN" />
-        <button type="submit">Log In</button>
-      </form>
-    </div>
+      <Box>
+        <Heading size="md" mb={4}>Log In</Heading>
+        <form onSubmit={handleLogin}>
+          <VStack spacing={3} align="stretch">
+            <FormControl>
+              <FormLabel>Email</FormLabel>
+              <Input name="email" placeholder="Email" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>PIN</FormLabel>
+              <Input name="pin" placeholder="PIN" type="password" />
+            </FormControl>
+            <Button type="submit" colorScheme="teal" width="full">Log In</Button>
+          </VStack>
+        </form>
+      </Box>
+    </Box>
   );
 }

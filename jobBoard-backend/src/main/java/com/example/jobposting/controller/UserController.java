@@ -94,7 +94,7 @@ public User currentUser(HttpSession session) {
         }
     }
     @PostMapping("/updateProfile")
-    public ResponseEntity<?>  updateProfile(HttpSession session, @RequestParam String name, @RequestParam String email, @RequestParam int pin, @RequestParam UserRole userRole, @RequestParam String resume) {
+    public ResponseEntity<?>  updateProfile(HttpSession session, @RequestParam String name, @RequestParam String email, @RequestParam int pin, @RequestParam String resume) {
         Long userid = (Long) session.getAttribute("userId");
 
         if (userid == null) {
@@ -102,7 +102,7 @@ public User currentUser(HttpSession session) {
 
         }
         try {
-            User user = userservice.updateProfile(userid, name, email, pin, userRole, resume);
+            User user = userservice.updateProfile(userid, name, email, pin, resume);
             return ResponseEntity.ok(user);
         }
         catch (Exception e) {

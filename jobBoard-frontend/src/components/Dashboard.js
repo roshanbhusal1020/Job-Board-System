@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
+import {
+  Box,
+  Button,
+  Heading,
+  Input,
+  Select,
+  Textarea,
+  VStack,
+  FormControl,
+  FormLabel
+} from "@chakra-ui/react";
+
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
-  const [roles, setRoles] = useState([]);
 
   const AUTH_URL = "http://localhost:8080/auth";
 
@@ -23,15 +34,6 @@ export default function Dashboard() {
     }
   };
 
-  // === Fetch roles for dropdown ===
-  const getUserRoles = async () => {
-    const res = await fetch(`${AUTH_URL}/roles`, {
-      method: "GET",
-      credentials: "include",
-    });
-    const data = await res.json();
-    setRoles(data);
-  };
 
   // === Form submission ===
   const handleUpdate = async (e) => {
@@ -42,7 +44,6 @@ export default function Dashboard() {
     formData.append("email", form.email.value);
     formData.append("pin", form.pin.value);
     formData.append("resume", form.resume.value);
-    formData.append("userRole", form.userRole.value);
 
     const res = await fetch(`${AUTH_URL}/updateProfile`, {
       method: "POST",
@@ -56,36 +57,44 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    getUserRoles();
     getUserDetails();
   }, []);
 
-  return (
-    <div>
+    return (
+    <Box>
       <Navbar />
-      <h1>THIS IS DASHBOARD</h1>
+      <Box maxW="md" mx="auto">
+        <Heading mb={4}>Dashboard</Heading>
 
-      {user && <div>Logged in as: {user.name}</div>}
+        {user && <Box mb={4}>Logged in as: {user.name}</Box>}
 
-      <form id="updateProfile" onSubmit={handleUpdate}>
-        <input name="name" placeholder="Name" defaultValue={user?.name || ""} /><br />
-        <input name="email" placeholder="Email" defaultValue={user?.email || ""} /><br />
-        <input name="pin" placeholder="PIN" defaultValue={user?.pin || ""} /><br />
-        <textarea name="resume" placeholder="Resume" defaultValue={user?.resume || ""} /><br />
+        <form id="updateProfile" onSubmit={handleUpdate}>
+          <VStack spacing={3} align="stretch">
+            <FormControl>
+              <FormLabel>Name</FormLabel>
+              <Input name="name" placeholder="Name" defaultValue={user?.name || ""} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Email</FormLabel>
+              <Input name="email" placeholder="Email" defaultValue={user?.email || ""} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>PIN</FormLabel>
+              <Input name="pin" placeholder="PIN" defaultValue={user?.pin || ""} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Resume</FormLabel>
+              <Textarea name="resume" placeholder="Resume" defaultValue={user?.resume || ""} />
+            </FormControl>
 
-        <select name="userRole" defaultValue={user?.userRole || ""}>
-          <option value="">Select Role</option>
-          {roles.map(role => (
-            <option key={role} value={role}>{role}</option>
-          ))}
-        </select><br />
-
-        <button type="submit">Update</button><br />
-      </form>
+            <Button type="submit" colorScheme="teal" width="full">Update</Button>
+          </VStack>
+        </form>
+      </Box>
 
       <div id="employerSection">
         {/* Add employer-specific content here if needed */}
       </div>
-    </div>
+    </Box>
   );
 }
