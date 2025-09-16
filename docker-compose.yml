@@ -1,0 +1,17 @@
+services:
+  backend:
+    build: ./jobBoard-backend
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./jobBoard-frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./jobBoard-frontend:/app
+      - /app/node_modules
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
