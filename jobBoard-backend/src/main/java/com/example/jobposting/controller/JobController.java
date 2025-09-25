@@ -1,13 +1,12 @@
 package com.example.jobposting.controller;
 
 
-import com.example.jobposting.dto.ApplyRequest;
 import com.example.jobposting.model.Job;
 import com.example.jobposting.model.User;
 import com.example.jobposting.model.enums.JobStatus;
+import com.example.jobposting.model.enums.UserRole;
 import com.example.jobposting.service.JobService;
 import com.example.jobposting.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -65,19 +64,23 @@ public class JobController {
         }
 
         User user = userService.getbyId(userId);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found");
+        }
+        if (user.getUserRole() != UserRole.EMPLOYER) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only employers can post jobs");
+        }
 
 
 
         Job job  = jobService.createJob(jobTitle, jobDescription, jobStatus, jobLocation, companyName, user );
 
-        if (job != null) {
-            session.setAttribute("jobId", job.getId());
-            return job;
+        if (job == null) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create job");
         }
-        else  {
-            return null;
 
-        }
+        session.setAttribute("jobId", job.getId());
+        return job;
     }
 
     @GetMapping("/getEmployersJobs")
@@ -85,6 +88,14 @@ public class JobController {
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+        }
+
+        User user = userService.getbyId(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+        }
+        if (user.getUserRole() != UserRole.EMPLOYER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only employers can view their job postings");
         }
 
         List<Job> jobs = jobService.getJobByUserId(userId);
