@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../Navbar";
 import {
   Box,
@@ -23,7 +24,53 @@ export default function PostJob() {
   });
 
   const [myJobs, setMyJobs] = useState([]);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
   const URL = "http://localhost:8080";
+  const navigate = useNavigate();
+
+  const fetchMyJobs = async () => {
+    const res = await fetch(`${URL}/jobs/getEmployersJobs`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      return;
+    }
+
+    const jobs = await res.json();
+    setMyJobs(jobs);
+  };
+
+  useEffect(() => {
+    const ensureEmployer = async () => {
+      try {
+        const res = await fetch(`${URL}/auth/userDetails`, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          navigate("/");
+          return;
+        }
+
+        const data = await res.json();
+        if (data.userRole !== "EMPLOYER") {
+          navigate("/feed");
+          return;
+        }
+
+        await fetchMyJobs();
+      } catch (err) {
+        navigate("/");
+      } finally {
+        setIsLoadingUser(false);
+      }
+    };
+
+    ensureEmployer();
+  }, [URL, navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -49,18 +96,9 @@ export default function PostJob() {
     setForm({ jobTitle: "", jobDescription: "", jobLocation: "", companyName: "" });
   };
 
-  const fetchMyJobs = async () => {
-    const res = await fetch(`${URL}/jobs/getEmployersJobs`, {
-      method: "GET",
-      credentials: "include",
-    });
-    const jobs = await res.json();
-    setMyJobs(jobs);
-  };
-
-  useEffect(() => {
-    fetchMyJobs();
-  }, []);
+  if (isLoadingUser) {
+    return null;
+  }
 
   return (
     <Box p={4}>

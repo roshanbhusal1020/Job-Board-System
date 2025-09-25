@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../Navbar";
 import {
   Box,
@@ -10,21 +11,58 @@ import {
 
 export default function MyJobs() {
   const [myJobs, setMyJobs] = useState([]);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const navigate = useNavigate();
+  const URL = "http://localhost:8080";
 
   const getMyJobs = async () => {
-    const res = await fetch("http://localhost:8080/jobs/getEmployersJobs", {
+    const res = await fetch(`${URL}/jobs/getEmployersJobs`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     });
+
+    if (!res.ok) {
+      return;
+    }
 
     const data = await res.json();
     setMyJobs(data);
   };
 
   useEffect(() => {
-    getMyJobs();
-  }, []);
+    const ensureEmployer = async () => {
+      try {
+        const res = await fetch(`${URL}/auth/userDetails`, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          navigate("/");
+          return;
+        }
+
+        const user = await res.json();
+        if (user.userRole !== "EMPLOYER") {
+          navigate("/feed");
+          return;
+        }
+
+        await getMyJobs();
+      } catch (err) {
+        navigate("/");
+      } finally {
+        setIsLoadingUser(false);
+      }
+    };
+
+    ensureEmployer();
+  }, [URL, navigate]);
+
+  if (isLoadingUser) {
+    return null;
+  }
 
   return (
     <Box p={4}>

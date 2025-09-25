@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../Navbar";
 import {
   Box,
@@ -11,6 +12,8 @@ import {
 
 export default function AppliedJobs() {
   const [applications, setApplications] = useState([]);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const navigate = useNavigate();
 
   const URL = "http://localhost:8080";
 
@@ -20,6 +23,10 @@ export default function AppliedJobs() {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     });
+
+    if (!res.ok) {
+      return;
+    }
 
     const data = await res.json();
     setApplications(data);
@@ -35,8 +42,38 @@ export default function AppliedJobs() {
   };
 
   useEffect(() => {
-    getApplications();
-  }, []);
+    const ensureJobSeeker = async () => {
+      try {
+        const res = await fetch(`${URL}/auth/userDetails`, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          navigate("/");
+          return;
+        }
+
+        const user = await res.json();
+        if (user.userRole !== "JOB_SEEKER") {
+          navigate("/dashboard");
+          return;
+        }
+
+        await getApplications();
+      } catch (err) {
+        navigate("/");
+      } finally {
+        setIsLoadingUser(false);
+      }
+    };
+
+    ensureJobSeeker();
+  }, [URL, navigate]);
+
+  if (isLoadingUser) {
+    return null;
+  }
 
   return (
     <Box p={4}>
